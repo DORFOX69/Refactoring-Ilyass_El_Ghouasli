@@ -29,19 +29,31 @@ Chaque implémentation branche son code sur ces tests au moyen d'un **adaptateur
 
 | Module | Adaptateur | Test |
 |---|---|---|
-| `transport-legacy` | `LegacyAdapter` | `LegacyContratTest` : passe ✅ |
-| `transport-refactored` | `NouveauSystemeAdapter` (à écrire) | `NouveauSystemeContratTest` (`@Disabled` au départ) |
+| `transport-legacy` | `LegacyAdapter` | `LegacyContratTest` : 68 tests ✅ |
+| `transport-refactored` | `NouveauSystemeAdapter` | `NouveauSystemeContratTest` : 68 tests ✅ |
 
 Les tests ne connaissent aucune classe interne : vous êtes libres de remodeler entièrement le code,
 tant que l'adaptateur peut traduire les appels.
 
+### État du refactoring
+
+Les étapes 0 à 8 de la [feuille de route](docs/feuille-de-route.md) sont terminées.
+Le module refactoré utilise notamment des stratégies tarifaires et de délai, des décorateurs
+de suppléments, des dépendances injectées et une affectation polymorphique des véhicules.
+L'extension fluviale est testée séparément : le contrat commun n'ayant pas été modifié, le mode
+`FLUVIAL` reste interne et n'est pas accessible via `SystemeTransport`.
+Le [diagnostic](docs/diagnostic-refactoring.md) détaille les choix et les vérifications.
+
 ### Commandes
+
+Prérequis : JDK 25 et Maven.
 
 ```bash
 mvn install
 ```
 
-Lance tous les tests. Pour la démo du code historique :
+Lance les tests de contrat des deux implémentations et les tests unitaires du module refactoré.
+Pour la démo du code historique :
 
 ```bash
 java -cp transport-legacy/target/classes fr.efrei.transport.Main
