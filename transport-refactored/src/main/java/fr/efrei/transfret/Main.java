@@ -6,9 +6,9 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        Flotte.initialiser();
-        ServiceClient serviceClient = new ServiceClient();
-        ServiceExpedition serviceExpedition = new ServiceExpedition();
+        ApplicationTransport application = new ApplicationTransport();
+        ServiceClient serviceClient = application.serviceClient();
+        ServiceExpedition serviceExpedition = application.serviceExpedition();
 
         System.out.println("\n----- Clients -----");
         Client dupont = serviceClient.creerClient("Jean Dupont", "jean.dupont@mail.fr", "0601020304", "12 rue de la Paix, 75002 Paris", TypeClient.PARTICULIER, null);

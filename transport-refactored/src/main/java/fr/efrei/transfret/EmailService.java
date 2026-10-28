@@ -3,26 +3,32 @@ package fr.efrei.transfret;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmailService {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final String SMTP_HOST = "smtp.transfret.fr";
-    public static final String EXPEDITEUR = "noreply@transfret.fr";
+public class EmailService implements CanalNotification {
 
-    // garde une trace des emails envoyés (demandé par le support client)
-    public static List<String[]> journal = new ArrayList<String[]>();
+    private static final String SMTP_HOST = "smtp.transfret.fr";
+    private static final String EXPEDITEUR = "noreply@transfret.fr";
+    private final List<NotificationEnvoyee> journal = new ArrayList<>();
 
-    public static boolean envoyer(String destinataire, String sujet, String corps) {
-        try {
-            if (destinataire == null || destinataire.indexOf("@") < 0) {
-                throw new Exception("Adresse invalide");
-            }
-            System.out.println("[EMAIL via " + SMTP_HOST + "] " + EXPEDITEUR + " -> " + destinataire + " | " + sujet);
-            System.out.println("        " + corps);
-            journal.add(new String[]{destinataire, sujet, corps});
-            return true;
-        } catch (Exception e) {
-            // on ignore, ce n'est pas grave si l'email ne part pas
-            return false;
+    @Override
+    public void envoyer(String destinataire, String sujet, String corps) {
+        if (destinataire == null || !destinataire.contains("@")) {
+            throw new IllegalArgumentException("Adresse email invalide");
         }
+        System.out.println("[EMAIL via " + SMTP_HOST + "] " + EXPEDITEUR + " -> " + destinataire + " | " + sujet);
+        System.out.println("        " + corps);
+        journal.add(new NotificationEnvoyee(TypeCanalNotification.EMAIL, destinataire, sujet));
+    }
+
+    @Override
+    public List<NotificationEnvoyee> notifications() {
+        return List.copyOf(journal);
+    }
+
+    @Override
+    public void reinitialiser() {
+        journal.clear();
     }
 }

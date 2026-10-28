@@ -1,6 +1,7 @@
 package fr.efrei.transfret;
 
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Utils {
@@ -8,7 +9,7 @@ public class Utils {
     private static final String FORMAT_DATE_PATTERN = "dd/MM/yyyy";
     private static final double CENTIMES_PAR_EURO = 100.0;
     public static final int DISTANCE_INCONNUE = -1;
-    public static final SimpleDateFormat FORMAT_DATE = new SimpleDateFormat(FORMAT_DATE_PATTERN);
+    private static final DateTimeFormatter FORMAT_DATE = DateTimeFormatter.ofPattern(FORMAT_DATE_PATTERN);
 
     public static double arrondir(double valeur) {
         return Math.round(valeur * CENTIMES_PAR_EURO) / CENTIMES_PAR_EURO;
@@ -18,7 +19,7 @@ public class Utils {
         if (d == null) {
             return "";
         }
-        return FORMAT_DATE.format(d);
+        return d.toInstant().atZone(ZoneId.systemDefault()).format(FORMAT_DATE);
     }
 
     public static String formaterPrix(double prix) {

@@ -1,18 +1,28 @@
 package fr.efrei.transfret;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public class SmsService {
+public class SmsService implements CanalNotification {
 
-    // garde une trace des SMS envoyés (facturés par l'opérateur)
-    public static List<String[]> journal = new ArrayList<String[]>();
+    private final List<NotificationEnvoyee> journal = new ArrayList<>();
 
-    public void envoyerSms(String numero, String message) {
+    @Override
+    public void envoyer(String numero, String sujet, String message) {
         if (message.length() > 160) {
             message = message.substring(0, 157) + "...";
         }
         System.out.println("[SMS] -> " + numero + " : " + message);
-        journal.add(new String[]{numero, message});
+        journal.add(new NotificationEnvoyee(TypeCanalNotification.SMS, numero, message));
+    }
+
+    @Override
+    public List<NotificationEnvoyee> notifications() {
+        return List.copyOf(journal);
+    }
+
+    @Override
+    public void reinitialiser() {
+        journal.clear();
     }
 }
