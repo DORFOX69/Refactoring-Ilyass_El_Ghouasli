@@ -1,8 +1,17 @@
 package fr.efrei.transfret;
 
 import java.util.List;
+import java.util.Map;
 
 public class CalculateurPrix {
+
+    private final Map<ModeTransport, TarifTransport> tarifs;
+    private final Map<TypeClient, PolitiqueRemise> remises;
+
+    public CalculateurPrix(Map<ModeTransport, TarifTransport> tarifs, Map<TypeClient, PolitiqueRemise> remises) {
+        this.tarifs = Map.copyOf(tarifs);
+        this.remises = Map.copyOf(remises);
+    }
 
     public double calculerPrixHT(List<Colis> colis, int distance, ModeTransport mode, boolean urgent, boolean assurance, TypeClient typeClient) {
         double poids = 0;
@@ -20,25 +29,11 @@ public class CalculateurPrix {
             if (c.getType() == TypeMarchandise.REFRIGERE) refrigere = true;
         }
 
-        // tarif de base selon le mode
-        double prix;
-        if (mode == ModeTransport.ROUTE) {
-            prix = distance * TARIF_ROUTE_PAR_KM + poids * TARIF_ROUTE_PAR_KG;
-        } else if (mode == ModeTransport.RAIL) {
-            prix = distance * TARIF_RAIL_PAR_KM + poids * TARIF_RAIL_PAR_KG;
-            if (prix < MINIMUM_RAIL) prix = MINIMUM_RAIL;
-        } else if (mode == ModeTransport.MER) {
-            prix = distance * TARIF_MER_PAR_KM + poids * TARIF_MER_PAR_KG;
-            if (prix < MINIMUM_MER) prix = MINIMUM_MER;
-        } else if (mode == ModeTransport.AIR) {
-            double poidsTaxable = poids;
-            if (volume * COEFFICIENT_POIDS_VOLUMETRIQUE > poids) {
-                poidsTaxable = volume * COEFFICIENT_POIDS_VOLUMETRIQUE;
-            }
-            prix = distance * TARIF_AIR_PAR_KM + poidsTaxable * TARIF_AIR_PAR_KG;
-        } else {
-            throw new IllegalArgumentException("Mode inconnu : " + mode);
+        TarifTransport tarif = tarifs.get(mode);
+        if (tarif == null) {
+            throw new IllegalArgumentException("Aucun tarif pour le mode : " + mode);
         }
+        double prix = tarif.calculer(distance, poids, volume);
 
         // suppléments
         if (fragile) prix = prix * COEFFICIENT_FRAGILE;
@@ -46,16 +41,11 @@ public class CalculateurPrix {
         if (refrigere) prix = prix * COEFFICIENT_REFRIGERE;
         if (urgent) prix = prix * COEFFICIENT_URGENCE;
 
-        // remise client
-        if (typeClient == TypeClient.ENTREPRISE) {
-            if (prix > SEUIL_REMISE_ENTREPRISE) {
-                prix = prix * REMISE_ENTREPRISE_SUPERIEURE;
-            } else {
-                prix = prix * REMISE_ENTREPRISE_STANDARD;
-            }
-        } else if (typeClient == TypeClient.PREMIUM) {
-            prix = prix * REMISE_PREMIUM;
+        PolitiqueRemise remise = remises.get(typeClient);
+        if (remise == null) {
+            throw new IllegalArgumentException("Aucune remise pour le type de client : " + typeClient);
         }
+        prix = remise.appliquer(prix);
 
         // assurance
         if (assurance) {
@@ -66,25 +56,10 @@ public class CalculateurPrix {
         return Utils.arrondir(prix);
     }
 
-    private static final double TARIF_ROUTE_PAR_KM = 1.20;
-    private static final double TARIF_ROUTE_PAR_KG = 0.10;
-    private static final double TARIF_RAIL_PAR_KM = 0.80;
-    private static final double TARIF_RAIL_PAR_KG = 0.07;
-    private static final double MINIMUM_RAIL = 150;
-    private static final double TARIF_MER_PAR_KM = 0.50;
-    private static final double TARIF_MER_PAR_KG = 0.03;
-    private static final double MINIMUM_MER = 500;
-    private static final double TARIF_AIR_PAR_KM = 0.60;
-    private static final double TARIF_AIR_PAR_KG = 4.50;
-    private static final double COEFFICIENT_POIDS_VOLUMETRIQUE = 167;
     private static final double COEFFICIENT_FRAGILE = 1.15;
     private static final double COEFFICIENT_DANGEREUX = 1.30;
     private static final double COEFFICIENT_REFRIGERE = 1.20;
     private static final double COEFFICIENT_URGENCE = 1.50;
-    private static final double SEUIL_REMISE_ENTREPRISE = 5000;
-    private static final double REMISE_ENTREPRISE_SUPERIEURE = 0.85;
-    private static final double REMISE_ENTREPRISE_STANDARD = 0.90;
-    private static final double REMISE_PREMIUM = 0.80;
     private static final double TAUX_ASSURANCE = 0.02;
     private static final double ASSURANCE_MINIMUM = 15;
 }

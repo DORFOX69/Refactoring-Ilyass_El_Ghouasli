@@ -1,6 +1,7 @@
 package fr.efrei.transfret;
 
 import java.util.Random;
+import java.util.Map;
 
 public class ApplicationTransport {
 
@@ -12,7 +13,16 @@ public class ApplicationTransport {
     private final ServiceClient serviceClient = new ServiceClient(clients, notificateur);
     private final ServiceExpedition serviceExpedition = new ServiceExpedition(
             expeditions,
-            new CalculateurPrix(),
+            new CalculateurPrix(
+                    Map.of(
+                            ModeTransport.ROUTE, new TarifRoute(),
+                            ModeTransport.RAIL, new TarifRail(),
+                            ModeTransport.MER, new TarifMer(),
+                            ModeTransport.AIR, new TarifAir()),
+                    Map.of(
+                            TypeClient.PARTICULIER, new RemiseParticulier(),
+                            TypeClient.ENTREPRISE, new RemiseEntreprise(),
+                            TypeClient.PREMIUM, new RemisePremium())),
             new AffectationVehicule(new Flotte()),
             new ValidateurExpedition(),
             new EstimateurDelai(),
