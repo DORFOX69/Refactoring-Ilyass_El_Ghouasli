@@ -1,5 +1,7 @@
 package fr.efrei.transfret;
 
+import java.util.List;
+
 public class CamionFrigorifique extends Camion {
 
     public CamionFrigorifique(String immatriculation, double capaciteMax) {
@@ -7,16 +9,15 @@ public class CamionFrigorifique extends Camion {
     }
 
     @Override
-    public void charger(Colis colis) {
-        // un camion frigo ne prend QUE des colis réfrigérés
-        if (colis.getType() != TypeMarchandise.REFRIGERE) {
-            throw new IllegalArgumentException("Un camion frigorifique ne transporte que des produits réfrigérés");
-        }
-        super.charger(colis);
+    protected boolean estCompatible(ModeTransport mode, List<Colis> colis) {
+        return mode == ModeTransport.ROUTE && colis.stream().allMatch(Colis::estRefrigere);
     }
 
     @Override
-    public void activerRefrigeration(double temperature) {
-        System.out.println("Réfrigération activée à " + temperature + "°C sur " + immatriculation);
+    public void partir(int distanceKm, List<Colis> colis) {
+        super.partir(distanceKm, colis);
+        System.out.println("Réfrigération activée à " + TEMPERATURE_CIBLE + "°C sur " + immatriculation);
     }
+
+    private static final double TEMPERATURE_CIBLE = 4;
 }

@@ -92,24 +92,7 @@ public class ServiceExpedition {
         e.setStatut(StatutExpedition.EN_COURS);
         Vehicule v = e.getVehicule();
         v.setDisponible(false);
-        try {
-            v.faireLePlein();
-        } catch (Exception ex) {
-        }
-        if (e.getMode() == ModeTransport.ROUTE || e.getMode() == ModeTransport.RAIL) {
-            v.rouler(e.getDistance());
-        } else if (e.getMode() == ModeTransport.MER) {
-            v.naviguer((int) (e.getDistance() / KM_PAR_MILLE_NAUTIQUE));
-        } else if (e.getMode() == ModeTransport.AIR) {
-            v.rouler(AIR_DISTANCE_PISTE_KM);
-            v.voler(ALTITUDE_CROISIERE_PIEDS);
-        }
-        for (Colis c : e.getColis()) {
-            if (c.getType() == TypeMarchandise.REFRIGERE) {
-                v.activerRefrigeration(TEMPERATURE_REFRIGERATION);
-                break;
-            }
-        }
+        v.partir(e.getDistance(), e.getColis());
         expeditions.mettreAJour(e);
         notificateur.notifier(e.getClient(), "Votre expédition " + e.getId() + " est en route",
                 "Votre expédition a quitté " + e.getVilleDepart() + ".",
@@ -158,10 +141,6 @@ public class ServiceExpedition {
         e.getVehicule().setDisponible(true);
     }
 
-    private static final double KM_PAR_MILLE_NAUTIQUE = 1.852;
-    private static final int AIR_DISTANCE_PISTE_KM = 2;
-    private static final int ALTITUDE_CROISIERE_PIEDS = 35000;
-    private static final double TEMPERATURE_REFRIGERATION = 4;
     private static final double FRAIS_ANNULATION_EN_COURS = 0.5;
     private static final double TAUX_TTC = 1.20;
 }

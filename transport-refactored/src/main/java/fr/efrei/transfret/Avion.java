@@ -1,29 +1,23 @@
 package fr.efrei.transfret;
 
+import java.util.List;
+
 public class Avion extends Vehicule {
 
     public Avion(String immatriculation, double capaciteMax) {
         super(immatriculation, capaciteMax);
     }
 
-    public void rouler(int km) {
-        // roulage sur la piste
+    @Override
+    protected boolean estCompatible(ModeTransport mode, List<Colis> colis) {
+        return mode == ModeTransport.AIR && colis.stream().noneMatch(Colis::estDangereux);
+    }
+
+    @Override
+    public void partir(int distanceKm, List<Colis> colis) {
         System.out.println("L'avion " + immatriculation + " roule sur la piste");
+        System.out.println("L'avion " + immatriculation + " vole à " + ALTITUDE_CROISIERE_PIEDS + " pieds");
     }
 
-    public void naviguer(int milesNautiques) {
-        throw new UnsupportedOperationException("Un avion ne navigue pas");
-    }
-
-    public void voler(int altitude) {
-        System.out.println("L'avion " + immatriculation + " vole à " + altitude + " pieds");
-    }
-
-    public void activerRefrigeration(double temperature) {
-        throw new UnsupportedOperationException("Pas de soute réfrigérée");
-    }
-
-    public boolean peutTransporterMatieresDangereuses() {
-        return false;
-    }
+    private static final int ALTITUDE_CROISIERE_PIEDS = 35000;
 }

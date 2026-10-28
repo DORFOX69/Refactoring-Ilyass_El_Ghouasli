@@ -29,6 +29,14 @@ public class Colis {
         return type.getLibelle();
     }
 
+    public boolean estDangereux() {
+        return type == TypeMarchandise.DANGEREUX;
+    }
+
+    public boolean estRefrigere() {
+        return type == TypeMarchandise.REFRIGERE;
+    }
+
     public String getDescription() {
         return description;
     }

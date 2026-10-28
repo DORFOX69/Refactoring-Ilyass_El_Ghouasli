@@ -51,7 +51,14 @@ public abstract class Vehicule implements IVehicule {
         }
     }
 
-    public void faireLePlein() {
-        System.out.println("Plein effectué pour " + immatriculation);
+    @Override
+    public final boolean peutPrendre(ModeTransport mode, List<Colis> colis) {
+        double poids = colis.stream().mapToDouble(Colis::getPoids).sum();
+        return disponible && capaciteMax - chargeActuelle >= poids && estCompatible(mode, colis);
     }
+
+    protected abstract boolean estCompatible(ModeTransport mode, List<Colis> colis);
+
+    @Override
+    public abstract void partir(int distanceKm, List<Colis> colis);
 }
