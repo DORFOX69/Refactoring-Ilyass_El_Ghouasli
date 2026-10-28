@@ -18,14 +18,20 @@ public class ApplicationTransport {
                             ModeTransport.ROUTE, new TarifRoute(),
                             ModeTransport.RAIL, new TarifRail(),
                             ModeTransport.MER, new TarifMer(),
-                            ModeTransport.AIR, new TarifAir()),
+                            ModeTransport.AIR, new TarifAir(),
+                            ModeTransport.FLUVIAL, new TarifFluvial()),
                     Map.of(
                             TypeClient.PARTICULIER, new RemiseParticulier(),
                             TypeClient.ENTREPRISE, new RemiseEntreprise(),
                             TypeClient.PREMIUM, new RemisePremium())),
             new AffectationVehicule(new Flotte()),
             new ValidateurExpedition(),
-            new EstimateurDelai(),
+            new EstimateurDelai(Map.of(
+                    ModeTransport.ROUTE, new DelaiRoute(),
+                    ModeTransport.RAIL, new DelaiRail(),
+                    ModeTransport.MER, new DelaiMer(),
+                    ModeTransport.AIR, new DelaiAir(),
+                    ModeTransport.FLUVIAL, new DelaiFluvial())),
             notificateur,
             new GenerateurIdentifiantExpedition(new Random()));
 

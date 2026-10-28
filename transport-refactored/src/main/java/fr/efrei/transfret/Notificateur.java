@@ -15,9 +15,7 @@ public class Notificateur {
 
     public void notifier(Client client, String sujet, String corps, String sms) {
         email.envoyer(client.getEmail(), sujet, corps);
-        if (client.getType() == TypeClient.PREMIUM) {
-            this.sms.envoyer(client.getTelephone(), sujet, sms);
-        }
+        client.getType().notifierSms(this.sms, client, sujet, sms);
     }
 
     public void bienvenue(Client client) {

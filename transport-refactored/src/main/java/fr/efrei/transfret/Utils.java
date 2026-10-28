@@ -50,7 +50,11 @@ public class Utils {
             return 760;
         } else if ((a.equals("PARIS") && b.equals("NEW YORK")) || (a.equals("NEW YORK") && b.equals("PARIS"))) {
             return 5840;
+        } else if ((a.equals("PARIS") && b.equals("LE HAVRE")) || (a.equals("LE HAVRE") && b.equals("PARIS"))) {
+            return DISTANCE_PARIS_LE_HAVRE;
         }
         return DISTANCE_INCONNUE;
     }
+
+    private static final int DISTANCE_PARIS_LE_HAVRE = 365;
 }

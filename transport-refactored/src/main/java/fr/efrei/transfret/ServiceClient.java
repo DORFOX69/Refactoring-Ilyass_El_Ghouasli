@@ -19,7 +19,7 @@ public class ServiceClient {
             System.out.println("ERREUR : email invalide (" + email + ")");
             return null;
         }
-        if (type == TypeClient.ENTREPRISE && (siret == null || siret.length() != 14)) {
+        if (!type.siretValide(siret)) {
             System.out.println("ERREUR : SIRET obligatoire (14 chiffres) pour une entreprise");
             return null;
         }

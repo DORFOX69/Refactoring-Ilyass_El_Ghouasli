@@ -12,9 +12,7 @@ public class GenerateurFacture {
         sb.append("Facture n° F-" + expedition.getId() + "\n");
         sb.append("Date : " + Utils.formaterDate(new Date()) + "\n");
         sb.append("Client : " + expedition.getClient().getNom() + "\n");
-        if (expedition.getClient().getType() == TypeClient.ENTREPRISE) {
-            sb.append("SIRET : " + expedition.getClient().getSiret() + "\n");
-        }
+        expedition.getClient().getType().ajouterSiret(sb, expedition.getClient());
         sb.append("Adresse : " + expedition.getClient().getAdresse() + "\n");
         sb.append("----------------------------------------------\n");
         sb.append("Trajet : " + expedition.getVilleDepart() + " -> " + expedition.getVilleArrivee() + " (" + expedition.getDistance() + " km)\n");

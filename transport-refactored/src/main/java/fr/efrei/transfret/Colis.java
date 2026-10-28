@@ -37,6 +37,12 @@ public class Colis {
         return type == TypeMarchandise.REFRIGERE;
     }
 
+    public boolean estHorsGabarit() {
+        return longueur > DIMENSION_MAXIMALE_STANDARD_CM
+                || largeur > DIMENSION_MAXIMALE_STANDARD_CM
+                || hauteur > DIMENSION_MAXIMALE_STANDARD_CM;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -94,4 +100,5 @@ public class Colis {
     }
 
     private static final double CENTIMETRES_CUBES_PAR_METRE_CUBE = 1_000_000;
+    private static final double DIMENSION_MAXIMALE_STANDARD_CM = 200;
 }

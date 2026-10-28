@@ -17,6 +17,7 @@ public class AssemblagePrix {
         prix = new SupplementFragile(prix);
         prix = new SupplementDangereux(prix);
         prix = new SupplementRefrigere(prix);
+        prix = new SupplementHorsGabarit(prix);
         prix = new SupplementUrgence(prix);
         prix = new RemisePrix(prix, remises);
         return new Assurance(prix);
